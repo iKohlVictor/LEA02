@@ -1,0 +1,16 @@
+{
+  " language ": " Aceita qualquer palavra que termina em 1",
+  " alphabet ": ["0", "1"],
+  " states ": ["q0", "q1"],
+  "q0": {
+    " start ": true,
+    " end ": false,
+    " path ": ["q0", "q1"]
+  },
+  "q1": {
+    " start ": false,
+    " end ": true,
+    " path ": ["q0", "q1"]
+  }
+}
+
