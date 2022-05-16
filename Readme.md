@@ -1,7 +1,21 @@
 ###LEA - 02 Interpretador de Autômatos Finitos Determinísticos###
 
-Etapas:
-[ X ] - Receber os dados via path.
-[ ] - Formatar os dados para deixar do formato necessário.
-[ ] - Construção da regra de négocio do LEA, deverá se adaptar de acordo com o AFD.
-[ ] - Gerar um arquivo com todas palavras informando se o alfabeto aceita ou rejeita a palavra.
+## Instalação
+
+O projeto foi desenvolvido em node.js, portanto, com o node já instalado na máquina rode os comandos abaixo, caso o node ainda não esteja instalado é só seguir da documentação [nvm](https://github.com/nvm-sh/nvm).
+
+# instalar uma versão do node
+
+- nvm install lts/fermium
+
+# verificar se a versão foi instalada
+
+- nvm ls
+
+## Para rodar o programa utilize o seguinte comando
+
+- npm start path.json path.txt
+
+Substituindo os path pelos caminhos desejados.
+
+exemplo: npm start ./afd.json ./palavras.txt

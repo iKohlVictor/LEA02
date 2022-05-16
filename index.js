@@ -1,82 +1,135 @@
 const fs = require("fs");
 const path = require("path");
+const filePath = [process.argv[2], process.argv[3]];
 
-const afdJson = {
-  language: " Aceita qualquer palavra que termina em 1",
-  alphabet: ["0", "1"],
-  states: ["q0", "q1"],
-  q0: {
-    start: true,
-    end: false,
-    path: ["q0", "q1"],
-  },
-  q1: {
-    start: false,
-    end: true,
-    path: ["q0", "q1"],
-  },
-};
-
-const wordData = [
-  "0001000111",
-  "00010001110001000111",
-  "001",
-  "1",
-  "00",
-  "01",
-  "0010",
-  "0101",
-  "0010101",
-  "00000001",
-  "11111110",
-  "00000010",
-  "0",
-  "01",
-  "01110",
-  "01010101010101010",
-  "0101111111000001",
-  "1010111010",
-  "101010001",
-  "1000000",
-];
-
-const getWord = async (pathWord) => {
+const readFile = async (filePath) => {
+  const ext = path.extname(filePath);
   try {
-    const data = fs.readFileSync(pathWord, "utf-8");
-    return data;
-  } catch (error) {
-    console.error(`Got an error trying to read the file: ${error.message}`);
+    const data = fs.readFileSync(filePath, "utf8");
+    if (ext == ".json") return JSON.parse(data);
+    if (ext == ".txt") return formatTxtArray(data);
+  } catch (err) {
+    console.error(err);
   }
 };
 
-const getAfd = async (pathJson) => {
-  try {
-    const data = fs.readFileSync(pathJson, "utf-8");
-    return data;
-  } catch (error) {
-    console.error(`Got an error trying to read the file: ${error.message}`);
+const formatTxtArray = async (txtArray) => {
+  let data = [];
+  let lines = txtArray.split("\n");
+  for (var i in lines) {
+    var row = lines[i];
+    var nums = row.split(",");
+    for (var j in nums) {
+      var num = parseInt(nums[j]);
+      if (!isNaN(num)) {
+        if (num == undefined) {
+          console.log("not insert value undefined");
+        } else {
+          data.push(num);
+        }
+      }
+    }
   }
+  return data;
 };
 
 const main = async () => {
-  // const pathWord = process.argv[2];
-  // const pathJson = process.argv[3];
-  // const wordData = await getWord(pathWord);
-  // const afdData = await getAfd(pathJson);
+  let afdJson;
+  let wordData;
 
+  if (filePath) {
+    afdJson = await readFile(filePath[0]);
+    wordData = await readFile(filePath[1]);
+  } else {
+    return "Dont have path";
+  }
+
+  let output;
+  let outputs = [];
+  const { states, initialState, endState, trapState } = await getStates(
+    afdJson
+  );
+  let cont = 0;
   for (const word of wordData) {
-    const letters = word.split("");
-    const lastLetter = letters[letters.length - 1];
-    const states = afdJson.states;
-    console.log(afdJson.language + ":");
-    console.log(word);
-    let state;
+    const letters = word.toString().split("");
+    let state = initialState;
     for (const letter of letters) {
-      if(afdJson.alphabet[0] === letter){
-        
-      }
-      console.log("-> ", letter, "-> ");
+      state = await checkingState(afdJson, letter, state);
+    }
+    if (state === endState) {
+      output = "[" + cont + "] " + word + " -> " + "accept ";
+    }
+    if (state === initialState) {
+      output = "[" + cont + "] " + word + " -> " + "reject ";
+    }
+    if (state === trapState) {
+      output = "[" + cont + "] " + word + " -> " + "reject ";
+    }
+    cont++;
+    outputs.push(output);
+  }
+  outputs.splice(0, 0, afdJson.language + ":");
+
+  await createOutput(outputs);
+};
+
+const getStates = async (afdJson) => {
+  const states = afdJson["states"];
+  let objStates = {
+    states: [],
+    initialState: "",
+    endState: "",
+    trapState: "",
+  };
+
+  objStates.states = states;
+  for (const state of states) {
+    if (afdJson[state]["start"] === true) {
+      objStates.initialState = state;
+    }
+    if (afdJson[state]["end"] === true) {
+      objStates.endState = state;
+    }
+    if (afdJson[state]["start"] === false && afdJson[state]["end"] === false) {
+      objStates.trapState = state;
     }
   }
+  return objStates;
+};
+
+const checkingState = (afdJson, value, state) => {
+  const newState = afdJson[state]["path"][Number(value)];
+  return newState;
+};
+
+const createOutput = async (outputs) => {
+  const outputPath = "output.txt";
+
+  let data = "";
+  for (const output of outputs) {
+    data += output + "\n";
+  }
+  let buffer = new Buffer.from(data);
+
+  fs.open(outputPath, "a", function (err, fd) {
+    if (err) {
+      console.log("Cant open file");
+    } else {
+      fs.write(
+        fd,
+        buffer,
+        0,
+        buffer.length,
+        null,
+        function (err, writtenbytes) {
+          if (err) {
+            console.log("Cant write to file");
+          } else {
+            console.log(writtenbytes + "characters added to file");
+          }
+        }
+      );
+    }
+  });
 };
 main();
