@@ -6,8 +6,13 @@ const readFile = async (filePath) => {
   const ext = path.extname(filePath);
   try {
     const data = fs.readFileSync(filePath, "utf8");
-    if (ext == ".json") return JSON.parse(data);
-    if (ext == ".txt") return formatTxtArray(data);
+    if (ext == ".json") {
+      return JSON.parse(data);
+    }
+    if (ext == ".txt") {
+      console.log(data);
+      return formatTxtArray(data);
+    }
   } catch (err) {
     console.error(err);
   }
@@ -16,20 +21,12 @@ const readFile = async (filePath) => {
 const formatTxtArray = async (txtArray) => {
   let data = [];
   let lines = txtArray.split("\n");
-  for (var i in lines) {
-    var row = lines[i];
-    var nums = row.split(",");
-    for (var j in nums) {
-      var num = parseInt(nums[j]);
-      if (!isNaN(num)) {
-        if (num == undefined) {
-          console.log("not insert value undefined");
-        } else {
-          data.push(num);
-        }
-      }
-    }
-  }
+  console.log(lines);
+  let array = [];
+  lines.forEach((l) => {
+    array.push(l.replace(",", ""));
+  });
+  data = array;
   return data;
 };
 
