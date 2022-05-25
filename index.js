@@ -21,7 +21,6 @@ const readFile = async (filePath) => {
 const formatTxtArray = async (txtArray) => {
   let data = [];
   let lines = txtArray.split("\n");
-  console.log(lines);
   let array = [];
   lines.forEach((l) => {
     array.push(l.replace(",", ""));
