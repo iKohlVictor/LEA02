@@ -10,7 +10,6 @@ const readFile = async (filePath) => {
       return JSON.parse(data);
     }
     if (ext == ".txt") {
-      console.log(data);
       return formatTxtArray(data);
     }
   } catch (err) {
@@ -25,6 +24,7 @@ const formatTxtArray = async (txtArray) => {
   lines.forEach((l) => {
     array.push(l.replace(",", ""));
   });
+
   data = array;
   return data;
 };
@@ -45,6 +45,7 @@ const main = async () => {
   const { states, initialState, endState, trapState } = await getStates(
     afdJson
   );
+
   let cont = 0;
   for (const word of wordData) {
     const letters = word.toString().split("");
@@ -54,13 +55,10 @@ const main = async () => {
     }
     if (state === endState) {
       output = "[" + cont + "] " + word + " -> " + "accept ";
-    }
-    if (state === initialState) {
+    } else {
       output = "[" + cont + "] " + word + " -> " + "reject ";
     }
-    if (state === trapState) {
-      output = "[" + cont + "] " + word + " -> " + "reject ";
-    }
+
     cont++;
     outputs.push(output);
   }
