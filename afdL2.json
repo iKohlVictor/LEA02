@@ -1,0 +1,37 @@
+{
+    "language": " L0 = {w | w possui aa ou bb como subpalavra}",
+    "alphabet": ["0", "1"],
+    "states": ["q0", "q1", "q2", "q3"],
+    "q0": {
+      "start": true,
+      "end": false,
+      "path": ["q2", "q1"]
+    },
+    "q1": {
+      "start": false,
+      "end": false,
+      "path": ["q3", "q5"]
+    },
+    "q2": {
+        "start": false,
+        "end": false,
+        "path": ["q5", "q4"]
+    },
+    "q3": {
+        "start": false,
+        "end": false,
+        "path": ["q1", "q2"]
+    }
+    ,
+    "q4": {
+        "start": false,
+        "end": false,
+        "path": ["q1", "q2"]
+    } 
+    ,
+    "q5": {
+        "start": false,
+        "end": true,
+        "path": ["q2", "q1"]
+    }    
+  }
